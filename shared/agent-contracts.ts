@@ -24,3 +24,10 @@ export interface HealthResponse {
   readonly ok: true;
   readonly service: 'deepagent-backend';
 }
+
+export interface OverviewQuickstartRunResponse {
+  readonly experimentId: 'overview-quickstart';
+  readonly prompt: string;
+  readonly resultText: string;
+  readonly rawResult: unknown;
+}

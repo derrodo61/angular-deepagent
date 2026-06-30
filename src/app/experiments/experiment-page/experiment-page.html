@@ -27,28 +27,42 @@
       </div>
 
       <div class="space-y-5 p-4">
-        <label class="block">
-          <span class="text-sm font-medium text-neutral-200">Prompt</span>
-          <textarea
-            class="mt-2 min-h-36 w-full resize-y border border-neutral-700 bg-neutral-950 p-3 text-sm leading-6 text-neutral-100 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
-            placeholder="The runnable UI for this docs example will go here."
-          ></textarea>
-        </label>
+        @if (canRunOverviewQuickstart()) {
+          <div class="border border-neutral-800 bg-neutral-950 p-4">
+            <p class="text-sm font-medium text-neutral-200">Docs example</p>
+            <p class="mt-2 text-sm leading-6 text-neutral-400">
+              Runs the weather-tool quickstart from the Deep Agents overview page through the Node
+              backend.
+            </p>
+            <p class="mt-4 text-sm text-neutral-500">Prompt</p>
+            <p class="mt-1 font-mono text-sm text-neutral-200">What's the weather in Tokyo?</p>
+          </div>
 
-        <div class="flex flex-wrap gap-3">
-          <button
-            type="button"
-            class="border border-emerald-500 bg-emerald-500 px-4 py-2 text-sm font-semibold text-neutral-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-          >
-            Run
-          </button>
-          <button
-            type="button"
-            class="border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-          >
-            Reset
-          </button>
-        </div>
+          <div class="flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="border border-emerald-500 bg-emerald-500 px-4 py-2 text-sm font-semibold text-neutral-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 disabled:cursor-not-allowed disabled:border-neutral-700 disabled:bg-neutral-800 disabled:text-neutral-500"
+              [disabled]="runState() === 'running'"
+              (click)="runOverviewQuickstart()"
+            >
+              {{ runState() === 'running' ? 'Running...' : 'Run overview quickstart' }}
+            </button>
+            <button
+              type="button"
+              class="border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              (click)="resetRun()"
+            >
+              Reset
+            </button>
+          </div>
+        } @else {
+          <div class="border border-neutral-800 bg-neutral-950 p-4">
+            <p class="text-sm leading-6 text-neutral-400">
+              This docs section has not been implemented yet. We will add its runnable example when
+              we reach it.
+            </p>
+          </div>
+        }
       </div>
     </section>
 
@@ -75,11 +89,34 @@
 
     <div class="grid gap-4 p-4 lg:grid-cols-2">
       <div class="min-h-48 border border-neutral-800 bg-neutral-950 p-4">
-        <p class="text-sm text-neutral-500">Streamed agent output will appear here.</p>
+        @if (errorMessage()) {
+          <p class="text-sm font-medium text-red-300">Run failed</p>
+          <pre class="mt-3 whitespace-pre-wrap text-sm leading-6 text-red-100">{{
+            errorMessage()
+          }}</pre>
+        } @else if (result(); as runResult) {
+          <p class="text-sm font-medium text-emerald-300">Result</p>
+          <pre class="mt-3 whitespace-pre-wrap text-sm leading-6 text-neutral-100">{{
+            runResult.resultText
+          }}</pre>
+        } @else {
+          <p class="text-sm text-neutral-500">
+            Run the implemented docs example to see the agent output.
+          </p>
+        }
       </div>
 
-      <div class="min-h-48 border border-neutral-800 bg-neutral-950 p-4">
-        <p class="text-sm text-neutral-500">Tool calls, events, and raw traces will appear here.</p>
+      <div class="min-h-48 overflow-x-auto border border-neutral-800 bg-neutral-950 p-4">
+        @if (result(); as runResult) {
+          <p class="text-sm font-medium text-neutral-300">Raw result</p>
+          <pre class="mt-3 text-xs leading-5 text-neutral-300">{{
+            formatRawResult(runResult.rawResult)
+          }}</pre>
+        } @else {
+          <p class="text-sm text-neutral-500">
+            The raw SDK result will appear here after a successful run.
+          </p>
+        }
       </div>
     </div>
   </section>

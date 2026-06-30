@@ -17,6 +17,7 @@ npm start
 ```
 
 The frontend runs at `http://localhost:4200/`.
+During local development, Angular proxies `/api` requests to the backend at `http://127.0.0.1:3000/`.
 
 Start the backend/proxy in a second terminal:
 
@@ -42,6 +43,9 @@ cp .env.example .env
 ```
 
 Do not put model credentials or privileged tool configuration in Angular browser environment files.
+
+The overview quickstart uses `@langchain/openai` with backend-only `OPENAI_API_KEY`.
+Set `OPENAI_MODEL` to change the model; the default is `gpt-5`.
 
 ## Quality Checks
 

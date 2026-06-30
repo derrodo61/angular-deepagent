@@ -4,6 +4,7 @@ import Fastify from 'fastify';
 import { z } from 'zod';
 
 import type { AgentRunEvent, HealthResponse } from '../../shared/agent-contracts';
+import { runOverviewQuickstart } from './experiments/overview-quickstart';
 
 config();
 
@@ -24,6 +25,18 @@ async function startServer(): Promise<void> {
     ok: true,
     service: 'deepagent-backend',
   }));
+
+  server.post('/api/experiments/overview-quickstart/runs', async (_request, reply) => {
+    try {
+      return await runOverviewQuickstart();
+    } catch (error) {
+      requestLogError(error);
+
+      return reply.code(500).send({
+        message: getErrorMessage(error),
+      });
+    }
+  });
 
   server.post('/api/agent-runs', async (request, reply) => {
     const parsed = agentRunRequestSchema.safeParse(request.body);
@@ -71,6 +84,18 @@ async function startServer(): Promise<void> {
 
 function writeServerSentEvent(stream: NodeJS.WritableStream, event: AgentRunEvent): void {
   stream.write(`data: ${JSON.stringify(event)}\n\n`);
+}
+
+function requestLogError(error: unknown): void {
+  server.log.error({ error }, 'Experiment run failed');
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return 'Experiment run failed.';
 }
 
 void startServer();

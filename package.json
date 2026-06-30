@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "server": "tsx watch server/src/index.ts",
     "server:start": "tsx server/src/index.ts",
     "server:typecheck": "tsc -p server/tsconfig.json --noEmit",
@@ -25,6 +25,7 @@
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@fastify/cors": "^11.2.0",
+    "@langchain/openai": "^1.5.3",
     "deepagents": "^1.10.5",
     "dotenv": "^17.4.2",
     "fastify": "^5.9.0",
