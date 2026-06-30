@@ -1,0 +1,86 @@
+@let item = experiment();
+
+<section class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+  <div class="border-b border-neutral-800 pb-5">
+    <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+      <div class="min-w-0">
+        <p class="text-sm font-medium text-emerald-300">{{ item.status }}</p>
+        <h2 class="mt-2 text-3xl font-semibold text-white">{{ item.title }}</h2>
+        <p class="mt-3 max-w-3xl text-base leading-7 text-neutral-300">{{ item.summary }}</p>
+      </div>
+
+      <a
+        class="inline-flex items-center justify-center border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 hover:border-emerald-500 hover:text-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        [href]="item.docUrl"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Open Docs
+      </a>
+    </div>
+  </div>
+
+  <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
+    <section class="border border-neutral-800 bg-neutral-900/60">
+      <div class="border-b border-neutral-800 px-4 py-3">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-neutral-400">Experiment</h3>
+      </div>
+
+      <div class="space-y-5 p-4">
+        <label class="block">
+          <span class="text-sm font-medium text-neutral-200">Prompt</span>
+          <textarea
+            class="mt-2 min-h-36 w-full resize-y border border-neutral-700 bg-neutral-950 p-3 text-sm leading-6 text-neutral-100 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
+            placeholder="The runnable UI for this docs example will go here."
+          ></textarea>
+        </label>
+
+        <div class="flex flex-wrap gap-3">
+          <button
+            type="button"
+            class="border border-emerald-500 bg-emerald-500 px-4 py-2 text-sm font-semibold text-neutral-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+          >
+            Run
+          </button>
+          <button
+            type="button"
+            class="border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="border border-neutral-800 bg-neutral-900/60">
+      <div class="border-b border-neutral-800 px-4 py-3">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-neutral-400">Checks</h3>
+      </div>
+
+      <ul class="space-y-3 p-4">
+        @for (check of item.checks; track $index) {
+          <li class="flex gap-3 text-sm leading-6 text-neutral-300">
+            <span class="mt-2 size-2 shrink-0 bg-emerald-400" aria-hidden="true"></span>
+            <span>{{ check }}</span>
+          </li>
+        }
+      </ul>
+    </aside>
+  </div>
+
+  <section class="border border-neutral-800 bg-neutral-900/60">
+    <div class="border-b border-neutral-800 px-4 py-3">
+      <h3 class="text-sm font-semibold uppercase tracking-wide text-neutral-400">Run Output</h3>
+    </div>
+
+    <div class="grid gap-4 p-4 lg:grid-cols-2">
+      <div class="min-h-48 border border-neutral-800 bg-neutral-950 p-4">
+        <p class="text-sm text-neutral-500">Streamed agent output will appear here.</p>
+      </div>
+
+      <div class="min-h-48 border border-neutral-800 bg-neutral-950 p-4">
+        <p class="text-sm text-neutral-500">Tool calls, events, and raw traces will appear here.</p>
+      </div>
+    </div>
+  </section>
+</section>

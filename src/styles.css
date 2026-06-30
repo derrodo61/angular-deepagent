@@ -1,3 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+html {
+  background: #0a0a0a;
+}
+
+body {
+  margin: 0;
+}
