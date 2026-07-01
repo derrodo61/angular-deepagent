@@ -26,6 +26,7 @@
     "@angular/router": "^22.0.0",
     "@fastify/cors": "^11.2.0",
     "@langchain/openai": "^1.5.3",
+    "@langchain/tavily": "^1.2.0",
     "deepagents": "^1.10.5",
     "dotenv": "^17.4.2",
     "fastify": "^5.9.0",

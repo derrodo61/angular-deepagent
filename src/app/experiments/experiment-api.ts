@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import type { OverviewQuickstartRunResponse } from '../../../shared/agent-contracts';
+import type {
+  DeepAgentsQuickstartRunResponse,
+  ExperimentRunResponse,
+  OverviewQuickstartRunResponse,
+} from '../../../shared/agent-contracts';
 
 interface ApiErrorResponse {
   readonly message?: string;
@@ -11,7 +15,17 @@ interface ApiErrorResponse {
 })
 export class ExperimentApi {
   async runOverviewQuickstart(): Promise<OverviewQuickstartRunResponse> {
-    const response = await fetch('/api/experiments/overview-quickstart/runs', {
+    return await this.postExperimentRun<OverviewQuickstartRunResponse>('overview-quickstart');
+  }
+
+  async runDeepAgentsQuickstart(): Promise<DeepAgentsQuickstartRunResponse> {
+    return await this.postExperimentRun<DeepAgentsQuickstartRunResponse>('deep-agents-quickstart');
+  }
+
+  private async postExperimentRun<TResponse extends ExperimentRunResponse>(
+    experimentId: TResponse['experimentId'],
+  ): Promise<TResponse> {
+    const response = await fetch(`/api/experiments/${experimentId}/runs`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -23,7 +37,7 @@ export class ExperimentApi {
       throw new Error(errorBody.message ?? `Experiment failed with HTTP ${response.status}.`);
     }
 
-    return (await response.json()) as OverviewQuickstartRunResponse;
+    return (await response.json()) as TResponse;
   }
 }
 

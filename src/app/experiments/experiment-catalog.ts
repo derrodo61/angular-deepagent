@@ -33,14 +33,14 @@ export const experimentSections: readonly ExperimentSection[] = [
       {
         id: 'quickstart',
         title: 'Quickstart',
-        status: 'Next up',
+        status: 'Ready for notes',
         summary:
-          'Run the first documented TypeScript Deep Agents example through the backend proxy.',
+          'Run the documented TypeScript research agent with Tavily search through the backend proxy.',
         docUrl: 'https://docs.langchain.com/oss/javascript/deepagents/quickstart',
         checks: [
           'Verify current imports',
-          'Create the minimal agent',
-          'Stream the response into the UI',
+          'Create the Tavily search tool',
+          'Inspect search calls and final report',
         ],
       },
       {

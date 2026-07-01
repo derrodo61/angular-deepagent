@@ -31,3 +31,12 @@ export interface OverviewQuickstartRunResponse {
   readonly resultText: string;
   readonly rawResult: unknown;
 }
+
+export interface DeepAgentsQuickstartRunResponse {
+  readonly experimentId: 'deep-agents-quickstart';
+  readonly prompt: string;
+  readonly resultText: string;
+  readonly rawResult: unknown;
+}
+
+export type ExperimentRunResponse = OverviewQuickstartRunResponse | DeepAgentsQuickstartRunResponse;

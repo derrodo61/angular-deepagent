@@ -3,12 +3,20 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 
-import type { OverviewQuickstartRunResponse } from '../../../../shared/agent-contracts';
+import type { ExperimentRunResponse } from '../../../../shared/agent-contracts';
 import { RunInspector } from '../components/run-inspector/run-inspector';
 import { ExperimentApi } from '../experiment-api';
 import { experiments } from '../experiment-catalog';
 
 type RunState = 'idle' | 'running' | 'succeeded' | 'failed';
+
+interface RunnableExperiment {
+  readonly description: string;
+  readonly prompt: string;
+  readonly runButtonLabel: string;
+  readonly runningLabel: string;
+  run(): Promise<ExperimentRunResponse>;
+}
 
 @Component({
   selector: 'app-experiment-page',
@@ -31,18 +39,46 @@ export class ExperimentPage {
     return experiments.find((item) => item.id === id) ?? experiments[0];
   });
 
-  protected readonly canRunOverviewQuickstart = computed(() => this.experiment().id === 'overview');
+  protected readonly runnableExperiment = computed<RunnableExperiment | null>(() => {
+    switch (this.experiment().id) {
+      case 'overview':
+        return {
+          description:
+            'Runs the weather-tool quickstart from the Deep Agents overview page through the Node backend.',
+          prompt: "What's the weather in Tokyo?",
+          runButtonLabel: 'Run overview quickstart',
+          runningLabel: 'Running overview...',
+          run: () => this.experimentApi.runOverviewQuickstart(),
+        };
+      case 'quickstart':
+        return {
+          description:
+            'Runs the research-agent quickstart with Tavily search through the Node backend.',
+          prompt: 'What is langgraph?',
+          runButtonLabel: 'Run Tavily quickstart',
+          runningLabel: 'Running research...',
+          run: () => this.experimentApi.runDeepAgentsQuickstart(),
+        };
+      default:
+        return null;
+    }
+  });
   protected readonly runState = signal<RunState>('idle');
-  protected readonly result = signal<OverviewQuickstartRunResponse | null>(null);
+  protected readonly result = signal<ExperimentRunResponse | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
 
-  protected async runOverviewQuickstart(): Promise<void> {
+  protected async runExperiment(): Promise<void> {
+    const runnable = this.runnableExperiment();
+    if (!runnable) {
+      return;
+    }
+
     this.runState.set('running');
     this.result.set(null);
     this.errorMessage.set(null);
 
     try {
-      const result = await this.experimentApi.runOverviewQuickstart();
+      const result = await runnable.run();
       this.result.set(result);
       this.runState.set('succeeded');
     } catch (error) {

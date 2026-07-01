@@ -31,6 +31,8 @@ Useful backend endpoints:
 
 - `GET http://127.0.0.1:3000/api/health`
 - `POST http://127.0.0.1:3000/api/agent-runs`
+- `POST http://127.0.0.1:3000/api/experiments/overview-quickstart/runs`
+- `POST http://127.0.0.1:3000/api/experiments/deep-agents-quickstart/runs`
 
 The agent-run endpoint currently emits placeholder Server-Sent Events. The real Deep Agents SDK integration belongs in the backend, not in the Angular browser bundle.
 
@@ -46,6 +48,9 @@ Do not put model credentials or privileged tool configuration in Angular browser
 
 The overview quickstart uses `@langchain/openai` with backend-only `OPENAI_API_KEY`.
 Set `OPENAI_MODEL` to change the model; the default is `gpt-5.4-mini`.
+
+The Deep Agents quickstart also uses Tavily search through `@langchain/tavily`.
+Set `TAVILY_API_KEY` in `.env` before running that experiment.
 
 ## Quality Checks
 

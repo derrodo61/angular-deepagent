@@ -27,15 +27,14 @@
       </div>
 
       <div class="space-y-5 p-4">
-        @if (canRunOverviewQuickstart()) {
+        @if (runnableExperiment(); as runnable) {
           <div class="border border-neutral-800 bg-neutral-950 p-4">
             <p class="text-sm font-medium text-neutral-200">Docs example</p>
             <p class="mt-2 text-sm leading-6 text-neutral-400">
-              Runs the weather-tool quickstart from the Deep Agents overview page through the Node
-              backend.
+              {{ runnable.description }}
             </p>
             <p class="mt-4 text-sm text-neutral-500">Prompt</p>
-            <p class="mt-1 font-mono text-sm text-neutral-200">What's the weather in Tokyo?</p>
+            <p class="mt-1 font-mono text-sm text-neutral-200">{{ runnable.prompt }}</p>
           </div>
 
           <div class="flex flex-wrap gap-3">
@@ -43,9 +42,9 @@
               type="button"
               class="border border-emerald-500 bg-emerald-500 px-4 py-2 text-sm font-semibold text-neutral-950 hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300 disabled:cursor-not-allowed disabled:border-neutral-700 disabled:bg-neutral-800 disabled:text-neutral-500"
               [disabled]="runState() === 'running'"
-              (click)="runOverviewQuickstart()"
+              (click)="runExperiment()"
             >
-              {{ runState() === 'running' ? 'Running...' : 'Run overview quickstart' }}
+              {{ runState() === 'running' ? runnable.runningLabel : runnable.runButtonLabel }}
             </button>
             <button
               type="button"
