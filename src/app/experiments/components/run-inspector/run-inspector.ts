@@ -1,6 +1,17 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
+
+import type { RunVirtualFile, RunVirtualFileContent } from '../../../../../shared/agent-contracts';
+import { ExperimentApi } from '../../experiment-api';
 
 type MessageRole = 'user' | 'ai' | 'tool' | 'unknown';
+
+type VirtualFileLoadState = 'idle' | 'loading' | 'loaded' | 'failed';
+
+interface LoadedVirtualFile {
+  readonly state: VirtualFileLoadState;
+  readonly content?: RunVirtualFileContent;
+  readonly error?: string;
+}
 
 interface TokenUsageSummary {
   readonly inputTokens?: number;
@@ -16,6 +27,7 @@ interface ToolCallSummary {
   readonly args: unknown;
   readonly result?: string;
   readonly status?: string;
+  readonly virtualFile?: RunVirtualFile;
 }
 
 interface InspectorMessage {
@@ -58,11 +70,16 @@ interface InspectorViewModel {
   styleUrl: './run-inspector.css',
 })
 export class RunInspector {
+  private readonly experimentApi = inject(ExperimentApi);
+
   readonly rawResult = input.required<unknown>();
   readonly resultText = input<string | null>(null);
+  readonly runId = input<string | null>(null);
+  readonly virtualFiles = input<readonly RunVirtualFile[]>([]);
+  protected readonly loadedVirtualFiles = signal<Record<string, LoadedVirtualFile>>({});
 
   protected readonly viewModel = computed(() =>
-    buildViewModel(this.rawResult(), this.resultText()),
+    buildViewModel(this.rawResult(), this.resultText(), this.virtualFiles()),
   );
 
   protected formatValue(value: unknown): string {
@@ -84,12 +101,52 @@ export class RunInspector {
 
     return parts.join(' · ');
   }
+
+  protected virtualFileState(path: string): LoadedVirtualFile {
+    return this.loadedVirtualFiles()[path] ?? { state: 'idle' };
+  }
+
+  protected async loadVirtualFile(path: string): Promise<void> {
+    const runId = this.runId();
+
+    if (!runId) {
+      this.setVirtualFileState(path, {
+        state: 'failed',
+        error: 'Run id is missing.',
+      });
+      return;
+    }
+
+    this.setVirtualFileState(path, { state: 'loading' });
+
+    try {
+      const content = await this.experimentApi.getRunVirtualFile(runId, path);
+      this.setVirtualFileState(path, { state: 'loaded', content });
+    } catch (error) {
+      this.setVirtualFileState(path, {
+        state: 'failed',
+        error: error instanceof Error ? error.message : 'Could not load virtual file.',
+      });
+    }
+  }
+
+  private setVirtualFileState(path: string, state: LoadedVirtualFile): void {
+    this.loadedVirtualFiles.update((current) => ({
+      ...current,
+      [path]: state,
+    }));
+  }
 }
 
-function buildViewModel(rawResult: unknown, resultText: string | null): InspectorViewModel {
+function buildViewModel(
+  rawResult: unknown,
+  resultText: string | null,
+  virtualFiles: readonly RunVirtualFile[],
+): InspectorViewModel {
   const messages = getMessages(rawResult).map((message, index) =>
     normalizeMessage(message, index, resultText),
   );
+  const filesByPath = new Map(virtualFiles.map((file) => [file.path, file]));
   const toolResults = new Map(
     messages
       .filter((message) => message.role === 'tool' && message.toolCallId)
@@ -106,6 +163,10 @@ function buildViewModel(rawResult: unknown, resultText: string | null): Inspecto
       ...toolCall,
       result: toolCall.id ? toolResults.get(toolCall.id)?.result : undefined,
       status: toolCall.id ? toolResults.get(toolCall.id)?.status : undefined,
+      virtualFile: findVirtualFile(
+        toolCall.id ? toolResults.get(toolCall.id)?.result : undefined,
+        filesByPath,
+      ),
     })),
   );
 
@@ -116,12 +177,32 @@ function buildViewModel(rawResult: unknown, resultText: string | null): Inspecto
         ...toolCall,
         result: toolCall.id ? toolResults.get(toolCall.id)?.result : undefined,
         status: toolCall.id ? toolResults.get(toolCall.id)?.status : undefined,
+        virtualFile: findVirtualFile(
+          toolCall.id ? toolResults.get(toolCall.id)?.result : undefined,
+          filesByPath,
+        ),
       })),
     })),
     toolCalls,
     summary: buildSummary(messages, toolCalls),
     rawJson: stringifyJson(rawResult),
   };
+}
+
+function findVirtualFile(
+  content: string | undefined,
+  filesByPath: ReadonlyMap<string, RunVirtualFile>,
+): RunVirtualFile | undefined {
+  if (!content) {
+    return undefined;
+  }
+
+  const match = content.match(/\/large_tool_results\/[A-Za-z0-9_-]+\.txt/);
+  if (!match) {
+    return undefined;
+  }
+
+  return filesByPath.get(match[0]);
 }
 
 function normalizeMessage(

@@ -4,6 +4,7 @@ import type {
   DeepAgentsQuickstartRunResponse,
   ExperimentRunResponse,
   OverviewQuickstartRunResponse,
+  RunVirtualFileContent,
 } from '../../../shared/agent-contracts';
 
 interface ApiErrorResponse {
@@ -20,6 +21,22 @@ export class ExperimentApi {
 
   async runDeepAgentsQuickstart(): Promise<DeepAgentsQuickstartRunResponse> {
     return await this.postExperimentRun<DeepAgentsQuickstartRunResponse>('deep-agents-quickstart');
+  }
+
+  async getRunVirtualFile(runId: string, path: string): Promise<RunVirtualFileContent> {
+    const params = new URLSearchParams({ path });
+    const response = await fetch(`/api/experiments/runs/${runId}/files?${params.toString()}`, {
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await readErrorBody(response);
+      throw new Error(errorBody.message ?? `File request failed with HTTP ${response.status}.`);
+    }
+
+    return (await response.json()) as RunVirtualFileContent;
   }
 
   private async postExperimentRun<TResponse extends ExperimentRunResponse>(

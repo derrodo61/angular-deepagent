@@ -6,11 +6,18 @@ import { z } from 'zod';
 import type { AgentRunEvent, HealthResponse } from '../../shared/agent-contracts';
 import { runDeepAgentsQuickstart } from './experiments/deep-agents-quickstart';
 import { runOverviewQuickstart } from './experiments/overview-quickstart';
+import { readRunFile } from './run-file-store';
 
 config();
 
 const agentRunRequestSchema = z.object({
   prompt: z.string().trim().min(1),
+});
+const runFileParamsSchema = z.object({
+  runId: z.string().uuid(),
+});
+const runFileQuerySchema = z.object({
+  path: z.string().min(1).startsWith('/'),
 });
 
 const server = Fastify({
@@ -49,6 +56,27 @@ async function startServer(): Promise<void> {
         message: getErrorMessage(error),
       });
     }
+  });
+
+  server.get('/api/experiments/runs/:runId/files', async (request, reply) => {
+    const params = runFileParamsSchema.safeParse(request.params);
+    const query = runFileQuerySchema.safeParse(request.query);
+
+    if (!params.success || !query.success) {
+      return reply.code(400).send({
+        message: 'A valid run id and virtual file path are required.',
+      });
+    }
+
+    const file = readRunFile(params.data.runId, query.data.path);
+
+    if (!file) {
+      return reply.code(404).send({
+        message: 'Virtual file not found. It may have expired or belongs to another run.',
+      });
+    }
+
+    return file;
   });
 
   server.post('/api/agent-runs', async (request, reply) => {

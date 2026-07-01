@@ -25,17 +25,32 @@ export interface HealthResponse {
   readonly service: 'deepagent-backend';
 }
 
+export interface RunVirtualFile {
+  readonly path: string;
+  readonly sizeBytes: number;
+  readonly mimeType: string;
+}
+
+export interface RunVirtualFileContent extends RunVirtualFile {
+  readonly runId: string;
+  readonly content: string;
+}
+
 export interface OverviewQuickstartRunResponse {
   readonly experimentId: 'overview-quickstart';
+  readonly runId: string;
   readonly prompt: string;
   readonly resultText: string;
+  readonly virtualFiles: readonly RunVirtualFile[];
   readonly rawResult: unknown;
 }
 
 export interface DeepAgentsQuickstartRunResponse {
   readonly experimentId: 'deep-agents-quickstart';
+  readonly runId: string;
   readonly prompt: string;
   readonly resultText: string;
+  readonly virtualFiles: readonly RunVirtualFile[];
   readonly rawResult: unknown;
 }
 

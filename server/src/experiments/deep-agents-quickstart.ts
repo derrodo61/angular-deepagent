@@ -1,10 +1,12 @@
 import { createDeepAgent } from 'deepagents';
 import { ChatOpenAI } from '@langchain/openai';
 import { tool } from 'langchain';
+import { randomUUID } from 'node:crypto';
 import * as z from 'zod';
 
 import type { DeepAgentsQuickstartRunResponse } from '../../../shared/agent-contracts';
 import { extractResultText } from '../agent-result';
+import { registerRunFiles } from '../run-file-store';
 import { TavilySearchProvider } from '../search/tavily-search-provider';
 import type { SearchProvider } from '../search/search-provider';
 
@@ -43,12 +45,16 @@ export async function runDeepAgentsQuickstart(): Promise<DeepAgentsQuickstartRun
   const rawResult: unknown = await agent.invoke({
     messages: [{ role: 'user', content: quickstartPrompt }],
   });
+  const runId = randomUUID();
+  const registeredFiles = registerRunFiles(runId, rawResult);
 
   return {
     experimentId: 'deep-agents-quickstart',
+    runId,
     prompt: quickstartPrompt,
     resultText: extractResultText(rawResult),
-    rawResult,
+    virtualFiles: registeredFiles.virtualFiles,
+    rawResult: registeredFiles.rawResult,
   };
 }
 

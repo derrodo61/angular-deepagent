@@ -106,7 +106,12 @@
       </div>
 
       @if (result(); as runResult) {
-        <app-run-inspector [rawResult]="runResult.rawResult" [resultText]="runResult.resultText" />
+        <app-run-inspector
+          [rawResult]="runResult.rawResult"
+          [resultText]="runResult.resultText"
+          [runId]="runResult.runId"
+          [virtualFiles]="runResult.virtualFiles"
+        />
       }
     </div>
   </section>
