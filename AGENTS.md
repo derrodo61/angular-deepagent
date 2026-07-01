@@ -41,6 +41,7 @@ This repository is a focused Angular test app for evaluating the LangChain Deep 
 
 ## LangChain / Deep Agents Standards
 
+- Use the `langchain-docs` MCP server as the preferred source for current LangChain, LangGraph, and Deep Agents documentation when implementing or debugging SDK examples.
 - When unsure about Deep Agents, LangChain, or LangGraph TypeScript APIs, check the official SDK documentation or package metadata before writing code.
 - Do not invent SDK imports, method names, event names, stream shapes, tool schemas, or configuration options.
 - Prefer the documented TypeScript APIs and examples over inferred Python equivalents.
