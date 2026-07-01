@@ -25,7 +25,7 @@ export async function runOverviewQuickstart(): Promise<OverviewQuickstartRunResp
   const agent = createDeepAgent({
     model: new ChatOpenAI({
       apiKey,
-      model: process.env['OPENAI_MODEL'] ?? 'gpt-5',
+      model: process.env['OPENAI_MODEL'] ?? 'gpt-5.4-mini',
     }),
     tools: [getWeather],
     systemPrompt: 'You are a helpful assistant',

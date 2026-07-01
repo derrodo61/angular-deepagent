@@ -45,7 +45,7 @@ cp .env.example .env
 Do not put model credentials or privileged tool configuration in Angular browser environment files.
 
 The overview quickstart uses `@langchain/openai` with backend-only `OPENAI_API_KEY`.
-Set `OPENAI_MODEL` to change the model; the default is `gpt-5`.
+Set `OPENAI_MODEL` to change the model; the default is `gpt-5.4-mini`.
 
 ## Quality Checks
 
