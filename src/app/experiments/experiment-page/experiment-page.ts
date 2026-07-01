@@ -6,11 +6,13 @@ import { map } from 'rxjs';
 import type { OverviewQuickstartRunResponse } from '../../../../shared/agent-contracts';
 import { ExperimentApi } from '../experiment-api';
 import { experiments } from '../experiment-catalog';
+import { RunInspector } from '../run-inspector/run-inspector';
 
 type RunState = 'idle' | 'running' | 'succeeded' | 'failed';
 
 @Component({
   selector: 'app-experiment-page',
+  imports: [RunInspector],
   templateUrl: './experiment-page.html',
   styleUrl: './experiment-page.css',
 })
@@ -53,9 +55,5 @@ export class ExperimentPage {
     this.runState.set('idle');
     this.result.set(null);
     this.errorMessage.set(null);
-  }
-
-  protected formatRawResult(value: unknown): string {
-    return JSON.stringify(value, null, 2);
   }
 }

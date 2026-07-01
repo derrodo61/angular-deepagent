@@ -87,7 +87,7 @@
       <h3 class="text-sm font-semibold uppercase tracking-wide text-neutral-400">Run Output</h3>
     </div>
 
-    <div class="grid gap-4 p-4 lg:grid-cols-2">
+    <div class="space-y-4 p-4">
       <div class="min-h-48 border border-neutral-800 bg-neutral-950 p-4">
         @if (errorMessage()) {
           <p class="text-sm font-medium text-red-300">Run failed</p>
@@ -106,18 +106,9 @@
         }
       </div>
 
-      <div class="min-h-48 overflow-x-auto border border-neutral-800 bg-neutral-950 p-4">
-        @if (result(); as runResult) {
-          <p class="text-sm font-medium text-neutral-300">Raw result</p>
-          <pre class="mt-3 text-xs leading-5 text-neutral-300">{{
-            formatRawResult(runResult.rawResult)
-          }}</pre>
-        } @else {
-          <p class="text-sm text-neutral-500">
-            The raw SDK result will appear here after a successful run.
-          </p>
-        }
-      </div>
+      @if (result(); as runResult) {
+        <app-run-inspector [rawResult]="runResult.rawResult" [resultText]="runResult.resultText" />
+      }
     </div>
   </section>
 </section>

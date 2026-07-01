@@ -1,0 +1,172 @@
+@let vm = viewModel();
+
+<div class="space-y-5">
+  <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Run summary">
+    <div class="border border-neutral-800 bg-neutral-950 p-3">
+      <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Messages</p>
+      <p class="mt-1 text-2xl font-semibold text-white">{{ vm.summary.messageCount }}</p>
+    </div>
+
+    <div class="border border-neutral-800 bg-neutral-950 p-3">
+      <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Tool Calls</p>
+      <p class="mt-1 text-2xl font-semibold text-white">{{ vm.summary.toolCallCount }}</p>
+    </div>
+
+    <div class="border border-neutral-800 bg-neutral-950 p-3">
+      <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Model</p>
+      <p class="mt-1 truncate text-sm font-medium text-neutral-100">
+        {{ vm.summary.modelName ?? 'unknown' }}
+      </p>
+      @if (vm.summary.modelProvider) {
+        <p class="mt-1 text-xs text-neutral-500">{{ vm.summary.modelProvider }}</p>
+      }
+    </div>
+
+    <div class="border border-neutral-800 bg-neutral-950 p-3">
+      <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Total Tokens</p>
+      <p class="mt-1 text-2xl font-semibold text-white">{{ vm.summary.totalTokens ?? 'n/a' }}</p>
+      @if (vm.summary.finishReason) {
+        <p class="mt-1 text-xs text-neutral-500">finish: {{ vm.summary.finishReason }}</p>
+      }
+    </div>
+  </section>
+
+  @if (vm.toolCalls.length > 0) {
+    <section class="border border-neutral-800 bg-neutral-950" aria-label="Tool calls">
+      <div class="border-b border-neutral-800 px-4 py-3">
+        <h4 class="text-sm font-semibold uppercase tracking-wide text-neutral-400">Tool Calls</h4>
+      </div>
+
+      <div class="divide-y divide-neutral-800">
+        @for (toolCall of vm.toolCalls; track toolCall.id ?? $index) {
+          <details class="group px-4 py-3">
+            <summary class="cursor-pointer list-none text-sm text-neutral-100 focus:outline-none">
+              <span class="font-semibold text-emerald-300">{{ toolCall.name }}</span>
+              @if (toolCall.status) {
+                <span class="ml-2 text-xs text-neutral-500">{{ toolCall.status }}</span>
+              }
+              <span class="float-right text-neutral-500 group-open:hidden">+</span>
+              <span class="float-right text-neutral-500 group-open:inline hidden">-</span>
+            </summary>
+
+            <div class="mt-3 grid gap-3 lg:grid-cols-2">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                  Arguments
+                </p>
+                <pre class="mt-2 overflow-x-auto text-xs leading-5 text-neutral-300">{{
+                  formatValue(toolCall.args)
+                }}</pre>
+              </div>
+
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Result</p>
+                <pre class="mt-2 whitespace-pre-wrap text-xs leading-5 text-neutral-300">{{
+                  toolCall.result ?? 'No matching tool result found.'
+                }}</pre>
+              </div>
+            </div>
+          </details>
+        }
+      </div>
+    </section>
+  }
+
+  <section class="space-y-3" aria-label="Message timeline">
+    <h4 class="text-sm font-semibold uppercase tracking-wide text-neutral-400">Timeline</h4>
+
+    @for (message of vm.messages; track message.id ?? message.index) {
+      <article class="border border-neutral-800 bg-neutral-950">
+        <details [open]="message.initiallyOpen">
+          <summary
+            class="cursor-pointer list-none px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          >
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                {{ message.index + 1 }}
+              </span>
+              <span
+                class="text-sm font-semibold"
+                [class.text-sky-300]="message.role === 'user'"
+                [class.text-emerald-300]="message.role === 'ai'"
+                [class.text-amber-300]="message.role === 'tool'"
+                [class.text-neutral-300]="message.role === 'unknown'"
+              >
+                {{ message.title }}
+              </span>
+              @if (message.toolName) {
+                <span class="text-xs text-neutral-500">{{ message.toolName }}</span>
+              }
+              @if (message.modelName) {
+                <span class="text-xs text-neutral-500">{{ message.modelName }}</span>
+              }
+              @if (message.finishReason) {
+                <span class="text-xs text-neutral-500">finish: {{ message.finishReason }}</span>
+              }
+            </div>
+          </summary>
+
+          <div class="space-y-4 border-t border-neutral-800 px-4 py-4">
+            @if (message.content) {
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                  Content
+                </p>
+                <pre class="mt-2 whitespace-pre-wrap text-sm leading-6 text-neutral-100">{{
+                  message.content
+                }}</pre>
+              </div>
+            }
+
+            @if (message.toolCalls.length > 0) {
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                  Tool Requests
+                </p>
+                <div class="mt-2 space-y-2">
+                  @for (toolCall of message.toolCalls; track toolCall.id ?? $index) {
+                    <div class="border border-neutral-800 bg-neutral-900 p-3">
+                      <p class="text-sm font-medium text-emerald-300">{{ toolCall.name }}</p>
+                      <pre class="mt-2 overflow-x-auto text-xs leading-5 text-neutral-300">{{
+                        formatValue(toolCall.args)
+                      }}</pre>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (message.tokenUsage) {
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                  Token Usage
+                </p>
+                <p class="mt-2 text-sm text-neutral-300">{{ tokenSummary(message.tokenUsage) }}</p>
+              </div>
+            }
+
+            <details>
+              <summary class="cursor-pointer text-sm font-medium text-neutral-300">
+                Raw message
+              </summary>
+              <pre class="mt-3 overflow-x-auto text-xs leading-5 text-neutral-400">{{
+                formatValue(message.raw)
+              }}</pre>
+            </details>
+          </div>
+        </details>
+      </article>
+    }
+  </section>
+
+  <details class="border border-neutral-800 bg-neutral-950">
+    <summary
+      class="cursor-pointer px-4 py-3 text-sm font-semibold uppercase tracking-wide text-neutral-400"
+    >
+      Raw JSON
+    </summary>
+    <pre
+      class="overflow-x-auto border-t border-neutral-800 p-4 text-xs leading-5 text-neutral-400"
+      >{{ vm.rawJson }}</pre>
+  </details>
+</div>
