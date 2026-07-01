@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 
 import type { OverviewQuickstartRunResponse } from '../../../../shared/agent-contracts';
+import { RunInspector } from '../components/run-inspector/run-inspector';
 import { ExperimentApi } from '../experiment-api';
 import { experiments } from '../experiment-catalog';
-import { RunInspector } from '../run-inspector/run-inspector';
 
 type RunState = 'idle' | 'running' | 'succeeded' | 'failed';
 
