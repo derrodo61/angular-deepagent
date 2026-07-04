@@ -59,16 +59,6 @@ export class ExperimentPage {
           runningLabel: 'Running research...',
           run: () => this.experimentApi.runDeepAgentsQuickstart(),
         };
-      case 'customization-model':
-        return {
-          description:
-            'Runs the model customization example with an initialized ChatOpenAI instance.',
-          prompt:
-            'Report which model configuration path this experiment uses, then answer in one sentence.',
-          runButtonLabel: 'Run model customization',
-          runningLabel: 'Running model check...',
-          run: () => this.experimentApi.runCustomizationModel(),
-        };
       default:
         return null;
     }

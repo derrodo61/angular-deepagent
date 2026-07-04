@@ -54,14 +54,4 @@ export interface DeepAgentsQuickstartRunResponse {
   readonly rawResult: unknown;
 }
 
-export interface CustomizationModelRunResponse {
-  readonly experimentId: 'customization-model';
-  readonly runId: string;
-  readonly prompt: string;
-  readonly resultText: string;
-  readonly virtualFiles: readonly RunVirtualFile[];
-  readonly rawResult: unknown;
-}
-
-export type ExperimentRunResponse =
-  OverviewQuickstartRunResponse | DeepAgentsQuickstartRunResponse | CustomizationModelRunResponse;
+export type ExperimentRunResponse = OverviewQuickstartRunResponse | DeepAgentsQuickstartRunResponse;

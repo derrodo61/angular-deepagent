@@ -57,19 +57,6 @@ export const experimentSections: readonly ExperimentSection[] = [
         ],
       },
       {
-        id: 'customization-model',
-        title: 'Customization / Model',
-        status: 'Ready for notes',
-        summary:
-          'Pass an initialized OpenAI chat model instance into createDeepAgent and inspect the trace.',
-        docUrl: 'https://docs.langchain.com/oss/javascript/deepagents/customization#model',
-        checks: [
-          'Use backend-only OPENAI_API_KEY',
-          'Pass an initialized ChatOpenAI instance',
-          'Inspect model metadata and diagnostic tool output',
-        ],
-      },
-      {
         id: 'customization-tools',
         title: 'Customization / Tools',
         status: 'Planned',

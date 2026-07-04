@@ -163,27 +163,6 @@ This is a shorter TypeScript form. It receives one input object, pulls `topic` o
 
 Both versions work. For introductory examples, the longer `input.topic` form is easier to read.
 
-## A No-Input Tool
-
-Some tools do not need input. The model customization experiment uses this pattern to report how the model was configured:
-
-```typescript
-const getModelConfiguration = tool(
-  () =>
-    JSON.stringify({
-      provider: 'openai',
-      configurationPath: 'initialized ChatOpenAI instance passed to createDeepAgent',
-    }),
-  {
-    name: 'get_model_configuration',
-    description: 'Return the model provider and configuration path for this run.',
-    schema: z.object({}),
-  },
-);
-```
-
-Use `z.object({})` when the tool has no arguments.
-
 ## Where Tools Should Live
 
 For the first experiment, it is fine to keep a small tool close to the experiment that uses it.
