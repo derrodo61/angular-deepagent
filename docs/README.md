@@ -7,6 +7,7 @@ Use these pages as a working map while the implementation evolves. Keep notes pr
 ## Pages
 
 - [Deep Agents Usage Notes](./deep-agents-usage-notes.md)
+- [Tools](./tools.md)
 
 ## Documentation Rules
 
