@@ -4,6 +4,7 @@ import Fastify from 'fastify';
 import { z } from 'zod';
 
 import type { AgentRunEvent, HealthResponse } from '../../shared/agent-contracts';
+import { runCustomizationModel } from './experiments/customization-model';
 import { runDeepAgentsQuickstart } from './experiments/deep-agents-quickstart';
 import { runOverviewQuickstart } from './experiments/overview-quickstart';
 import { readRunFile } from './run-file-store';
@@ -49,6 +50,18 @@ async function startServer(): Promise<void> {
   server.post('/api/experiments/deep-agents-quickstart/runs', async (_request, reply) => {
     try {
       return await runDeepAgentsQuickstart();
+    } catch (error) {
+      requestLogError(error);
+
+      return reply.code(500).send({
+        message: getErrorMessage(error),
+      });
+    }
+  });
+
+  server.post('/api/experiments/customization-model/runs', async (_request, reply) => {
+    try {
+      return await runCustomizationModel();
     } catch (error) {
       requestLogError(error);
 

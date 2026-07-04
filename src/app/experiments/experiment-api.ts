@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import type {
+  CustomizationModelRunResponse,
   DeepAgentsQuickstartRunResponse,
   ExperimentRunResponse,
   OverviewQuickstartRunResponse,
@@ -21,6 +22,10 @@ export class ExperimentApi {
 
   async runDeepAgentsQuickstart(): Promise<DeepAgentsQuickstartRunResponse> {
     return await this.postExperimentRun<DeepAgentsQuickstartRunResponse>('deep-agents-quickstart');
+  }
+
+  async runCustomizationModel(): Promise<CustomizationModelRunResponse> {
+    return await this.postExperimentRun<CustomizationModelRunResponse>('customization-model');
   }
 
   async getRunVirtualFile(runId: string, path: string): Promise<RunVirtualFileContent> {
