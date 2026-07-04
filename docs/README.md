@@ -6,6 +6,7 @@ Use these pages as a working map while the implementation evolves. Keep notes pr
 
 ## Pages
 
+- [Backends](./backends.md)
 - [Deep Agents Usage Notes](./deep-agents-usage-notes.md)
 - [Tools Introduction](./tools/introduction.md)
 - [Built-In Tools](./tools/built-in-tools/README.md)
