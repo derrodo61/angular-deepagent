@@ -101,6 +101,26 @@ With this configuration, a virtual path like `/notes/todo.txt` maps to a real fi
 /Users/rolfdohrmann/workspace/notes/todo.txt
 ```
 
+`virtualMode` controls how file paths are interpreted.
+
+With `virtualMode: true`, paths are treated as virtual paths inside `rootDir`:
+
+```text
+Agent path: /notes/todo.txt
+Real file:  /Users/rolfdohrmann/workspace/notes/todo.txt
+```
+
+This is the safer mode. It keeps the agent inside the configured root directory and rejects path traversal patterns such as `..` or `~`.
+
+With `virtualMode: false`, absolute paths are treated as real absolute paths on the machine:
+
+```text
+Agent path: /Users/rolfdohrmann/.env
+Real file:  /Users/rolfdohrmann/.env
+```
+
+That means absolute paths can escape `rootDir`. Use this only for controlled local experiments where broad filesystem access is intentional.
+
 Good for:
 
 - local development tools
