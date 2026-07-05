@@ -57,22 +57,6 @@ export const experimentSections: readonly ExperimentSection[] = [
         ],
       },
       {
-        id: 'customization-tools',
-        title: 'Customization / Tools',
-        status: 'Planned',
-        summary: 'Customize the agent with documented domain tools and inspect tool behavior.',
-        docUrl: 'https://docs.langchain.com/oss/javascript/deepagents/customization#tools',
-        checks: ['Verify tool schema', 'Show arguments and result', 'Compare with built-in tools'],
-      },
-      {
-        id: 'customization-mcp-tools',
-        title: 'Customization / MCP Tools',
-        status: 'Planned',
-        summary: 'Load tools from an MCP server only after checking the current setup path.',
-        docUrl: 'https://docs.langchain.com/oss/javascript/deepagents/customization#mcp-tools',
-        checks: ['Verify MCP client setup', 'List loaded tools', 'Handle connection errors'],
-      },
-      {
         id: 'customization-system-prompt',
         title: 'Customization / System Prompt',
         status: 'Planned',
